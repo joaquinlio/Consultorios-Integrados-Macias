@@ -1,0 +1,387 @@
+<section class="container mt-5 pt-5">
+    <div class="input-group col-3">
+      <select class="custom-select" id="inputGroupSelect04" aria-label="Example select with button addon">
+        <option selected>Choose...</option>
+        <option value="1">One</option>
+        <option value="2">Two</option>
+        <option value="3">Three</option>
+      </select>
+  <div class="input-group-append">
+    <button class="btn btn-outline-secondary" type="button">Selecionar</button>
+  </div>
+</div>
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th scope="col">Hora</th>
+          <th scope="col">Paciente</th>
+          <th scope="col">Especialidad</th>
+          <th scope="col">ObraSocial</th>
+        </tr>
+      </thead>
+        <tbody>
+        <tr>
+          <th scope="row">1</th>
+          <td>Mark</td>
+          <td>Otto</td>
+          <td>@mdo</td>
+        </tr>
+        <tr>
+          <th scope="row">2</th>
+          <td>Jacob</td>
+          <td>Thornton</td>
+          <td>@fat</td>
+        </tr>
+        <tr>
+          <th scope="row">3</th>
+          <td colspan="2">Larry the Bird</td>
+          <td>@twitter</td>
+        </tr>
+        </tbody>
+    </table>
+      
+  </section>     
+
+
+  $accion = (isset($_GET['accion']))?$_GET['accion']:'leer';
+  switch ($accion) {
+    case 'agregar':
+      # instruccion agregar 
+      $sql = $link->prepare("INSERT INTO turnos(title,descripcion,color,start)VALUES(:title,:descripcion,:color,:start)");
+    
+      $respuesta = $sql->execute(array(
+        "title" =>$_POST['title'];
+            "descripcion" =>$_POST['descripcion'];
+            "color" =>$_POST['color'];
+            "start" =>$_POST['start'];
+      ));
+      echo json_encode($respuesta);
+      break;
+    case 'eliminar':
+      # instruccion eliminar 
+      echo "instruccion eliminar";
+      break;
+    case 'modificar':
+      # instruccion modificar 
+      echo "instruccion modificar";
+      break;  
+    default:
+      $sql = "SELECT * FROM turnos";
+      $stmt = $link->prepare($sql);
+      $stmt->execute();
+      $resultado = $stmt->fetchAll();
+      echo json_encode($resultado);
+      break;
+  }
+  
+<?php
+$link = new PDO("mysql:host=localhost;dbname=consultorio",
+                        "root",
+                        "");
+$sql = $link->prepare("SELECT * FROM medicos");
+      $sql->execute();
+      $resultado2 = $sql->fetchAll(PDO::FETCH_ASSOC);
+?>
+
+ 
+        <input type="hidden" name="txtID" id="txtID">
+        <input type="hidden" name="txtFecha" id="txtFecha">
+          <div class="form-row">
+            <div class="form-group col-md-8">
+              <label>Titulo: </label>
+              <input type="text" name="txtTitulo" id="txtTitulo" class="form-control" placeholder="Nombre Del Paciente">
+            </div>
+             <div class="form-group col-md-4">
+                <label>Hora: </label>
+                <div class="input-group clockpicker" data-autoclose="true">
+                <input type="text" name="txtHora" id="txtHora" value="09:30" class="form-control">
+                </div>
+            </div>
+            <div class="form-group">
+              <label>Descripcion: </label>
+              <textarea id="txtDescripcion" rows="2" class="form-control"></textarea>
+            </div>
+            <div class="for-group">
+              <label>Color: </label>
+              <input type="color" value="#0047CC" id="txtColor" class="form-control">
+            </div>
+            <div class="modal-footer">
+              <button type="button" id="btnAgregar" class="btn">Agregar</button>
+              <button type="button" id="btnModificar" class="btn btn-success">Modificar </button>
+              <button type="button" id="btnEliminar" class="btn btn-danger">Borrar</button>
+              <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+            </div>
+        </div>
+
+
+
+  
+
+
+
+      <?php foreach ($listar as $medico ) {  ?>
+            <option value="<?php echo $medico['id']; ?>"><?php echo $medico['nombre']; ?></option>
+          <?php
+          }
+          ?>
+
+
+
+           <script>/*setTimeout('document.location.reload()',60000);*/ </script>
+<script>
+  
+  $(document).ready(function(){
+    /*var dias = filtrarDia();*/
+    $('#calendario').fullCalendar({
+      header:{
+        left:'today,prev,next',
+        center:'title',
+        right:'month,basicWeek,agendaDay'
+      },
+      weekends: false,
+      /*hiddenDays: dias,*/
+      showNonCurrentDates: false,
+      defaultView: 'basicWeek',
+      allDayDefault: false,
+      defaultTimedEventDuration: '00:15:00',
+      forceEventDuration: true,
+      selectable: true,
+ 
+      dayClick:function(date,jsEvent,view){
+        
+        $('#btnAgregar').prop("disabled",false);
+        $('#btnEliminar').prop("disabled",true);
+        $('#btnModificar').prop("disabled",true);
+
+        limpiarFormulario();
+        $('#txtFecha').val(date.format());
+        $('#modalTurnos').modal();
+      },
+       /*events:<?php echo $listar;?>,*/
+      events:'http://localhost/consultorio/clases/turnos.php',
+
+      eventRender: function eventRender( event, element, view ) {
+       return ['all',event.medico].indexOf($('#filtrarMed').val()) >= 0
+      },
+      eventClick:function(calEvent,jsEvent,view){
+        $('#btnAgregar').prop("disabled",true);
+        $('#btnEliminar').prop("disabled",false);
+        $('#btnModificar').prop("disabled",false);
+
+
+        $('#tituloTurno').html(calEvent.title);
+
+        $('#txtDescripcion').val(calEvent.descripcion);
+        $('#txtID').val(calEvent.id);
+        $('#txtTitulo').val(calEvent.title);
+        $('#medico').val(calEvent.medico);
+
+        FechaHora =  calEvent.start._i.split(" ");
+        $('#txtFecha').val(FechaHora[0]);
+        $('#txtHora').val(FechaHora[1]);
+        $('#modalTurnos').modal();
+      }
+    });
+  });
+</script>
+
+<!-- Modal agregar editar borrar -->
+<div class="modal fade" id="modalTurnos" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="tituloTurno"></h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" name="txtID" id="txtID">
+          <input type="hidden" name="txtFecha" id="txtFecha">
+            <div class="form-row">
+              <div id="pacienteAuto" class="form-group col-md-8">
+                  <label>Titulo:</label>
+                  <input type='text' class='typeahead form-control' id='txtTitulo' placeholder='Buscar Paciente..' autocomplete='off' spellcheck='false'>
+                </div>
+                 <div class="form-group col-md-4">
+                    <label>Hora:</label>
+                    <div class="input-group clockpicker" data-autoclose="true">
+                    <input type="text" name="txtHora" id="txtHora" value="09:30" class="form-control">
+                    </div>
+                </div>
+                <div class="form-group col-md-8">
+                  <label>Descripcion:</label>
+                  <textarea id="txtDescripcion" rows="2" class="form-control"></textarea>
+                </div>
+                <div class="form-group col-md-4">
+                   <label>Medico:</label>
+                  <select id="medico" name="medico" class="custom-select">
+                <?php foreach ($resultado as $medico ) {  ?>
+                  <option value="<?php echo $medico['id']; ?>"><?php echo $medico['nombre']; ?></option>
+                <?php
+                }
+                ?>
+                  </select>
+                </div>           
+            </div>
+        <div class="modal-footer">
+          <button type="button" id="btnAgregar" class="btn btn-success">Agregar</button>
+          <button type="button" id="btnModificar" class="btn btn-success">Modificar </button>
+          <button type="button" id="btnEliminar" class="btn btn-danger">Borrar</button>
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    <script>
+      var NuevoTurno;
+      $('#btnAgregar').click(function(){
+        RecolectarDatos();
+        EnviarInformacion('agregar',NuevoTurno);
+      });
+      $('#btnEliminar').click(function(){
+        RecolectarDatos();
+        EnviarInformacion('eliminar',NuevoTurno);
+      });
+       $('#btnModificar').click(function(){
+        RecolectarDatos();
+        EnviarInformacion('modificar',NuevoTurno);
+      });
+      $('#filtrarMed').on('change',function(){
+        medico = $('#filtrarMed').val();
+      $('#calendario').fullCalendar('rerenderEvents');        
+      });
+
+      function RecolectarDatos(){
+        NuevoTurno = {
+          id:$('#txtID').val(),
+          title:$('#txtTitulo').val(),
+          start:$('#txtFecha').val()+" "+$('#txtHora').val(),
+          descripcion:$('#txtDescripcion').val(),
+          medico:$('#medico').val()        
+        };
+      }
+      function EnviarInformacion(accion,objEvento){        
+        $.ajax({
+          type:'POST',
+          url:'clases/turnos.php?accion='+accion,
+          data:objEvento,
+          success: function(msg){
+            if (msg) {
+              $('#calendario').fullCalendar('refetchEvents');
+              $('#modalTurnos').modal('toggle');
+            }
+          },
+          error: function(){
+            alert("El Horario ya Posee un Turno");
+          }
+        });
+      }
+      function filtrarDia(){
+         
+        switch(medico){
+          case 1:return [1,5];
+          case 2:return [2,4];
+        }
+      }
+       
+   $('.clockpicker').clockpicker();
+
+    function limpiarFormulario(){
+        $('#txtDescripcion').val('');
+        $('#txtID').val('');
+        $('#txtTitulo').val('');
+        $('#txtColor').val('');
+    }
+    var pacientes = <?php 
+         $objMedico = new Paciente();
+        $listado = $objMedico->listarPacientes();
+        ?>;
+
+    var pacientes = new Bloodhound({
+      datumTokenizer: Bloodhound.tokenizers.whitespace,
+      queryTokenizer: Bloodhound.tokenizers.whitespace,
+      // `states` is an array of state names defined in "The Basics"
+     local: pacientes
+    });
+
+  $('#pacienteAuto.typeahead').typeahead({
+      hint: true,
+      highlight: true,
+      minLength: 1
+    },
+    {
+      name: 'pacientes',
+      source: pacientes
+    }
+  );
+    </script>
+
+
+    <td id="<?=$strMedico['id'];?>_<?=$strFecha?>_<?=$a?>00"> <?=$turno['pacNombre'];?></td>
+        <td id="<?=$strMedico['id'];?>_<?=$strFecha?>_<?=$a?>15"> <?="$a:15"?></td>
+        <td id="<?=$strMedico['id'];?>_<?=$strFecha?>_<?=$a?>30"><a href="#" onclick="modalAlta(<?=$strMedico['id'];?>,<?=$strFecha?>,<?=$a?>30); return false"><img src="imagenes/add.png" data-toggle="modal" data-target="#modalTurnoAlta"></a></td>
+        <td id="medico_20180731_<?=$a?>45"> <?=$a?>:45</td>
+
+        $(function() {
+      $("#pacNombre").autocomplete({
+        source: 'buscador.php',
+        select: function( event, ui ) {
+            $("#dni").html('<input type="text" id="dni" value="'+ui.item.dni+'">');
+
+            /*"<label>DNI</label><input type='text' name='dni' id='dni' class='form-control' autocomplete='off'>"*/
+            }
+      });
+    });
+
+
+    foreach($rsTurno as $key => $value){
+    if ($value["pago"]==1) {
+      $boton = '"btn btn-success disabled"';
+    }else{
+      $boton = '"btn btn-danger"';
+    }
+    //selectHorarios($rsTurno);
+     /*for($a=$horaDesde;$a<=$horaHasta;$a++){
+      if (($value["dia"] !== $a.":00")and($value["dia"] !== $a.":15")and($value["dia"] !== $a.":30")and($value["dia"] !== $a.":45")){$option ="<option>".$a.":00 </option><option>".$a.":15 </option><option>".$a.":30 </option><option>".$a.":45 </option>";}     
+    }*/
+    if ($value["dia"]!==$FechaHora) {$option = $FechaHora;}
+    //echo "comp: ".$value["dia"]." ".$FechaHora." -- ";
+    if($value["dia"]==$FechaHora){
+      $paciente = '"'.$value["pacNombre"].'"';
+      $dni = '"'.$value["dni"].'"';
+      $dia = '"'.$value["dia"].'"';
+      $obraNom = '"'.$value["razonsocial"].'"';
+      echo "<button class='btn btn-info' data-toggle='modal' id='btnDetalles' onclick='modalTurnoDetalles(".$dia.",".$medID.",".$medico.",".$fecha.",".$paciente.",".$value["paciente"].",".$value["id"].",".$obraNom.",".$dni.",".$value["telefono"].",".$value["monto"].",".$boton.",".$value["pago"]."); return false'>".$value["pacNombre"]."</button>";
+      $encontrado=true;
+    }
+  }
+  if(!$encontrado){
+    if (!$rsTurno){
+          echo "<img src='imagenes/add.png' data-toggle='modal' onclick='modalTurnoAlta(".$hora.",".$medID.",".$fecha.",".$medico."); return false'>";
+        }else {
+           echo "<img src='imagenes/add.png' data-toggle='modal' onclick='modalTurnoAlta(".$hora.",".$value["medico"].",".$fecha.",".$medico."); return false'>"; 
+        } 
+  }
+}
+
+
+
+
+/*beforeShowDay: function(date) {
+                        var day = date.getDay();
+                        return [(day != <?
+                          $rsCalendario = mysql_query("SELECT diasemana FROM medicos_reservas WHERE medico =".$value['id']." AND horadesde = 0");
+                          //print_r($rsCalendario);
+                          foreach ($rsCalendario as $diaCal) {
+                            echo $diaCal["diasemana"];             
+                              foreach ($rsCalendario as $diasemana2) {
+                                if ($diasemana2["diasemana"]!=$diaCal["diasemana"]) {
+                                  echo " && day !=".$diasemana2["diasemana"];
+                                }                                         
+                              }
+                              break;                      
+                          }                         
+                          ?>)];
+                        }*/
