@@ -23,9 +23,11 @@
             <thead>
               <tr>
                 <th class="text-center" scope="col">Nombre</th>
+                <th class="text-center" scope="col">Telefono</th>
                 <th class="text-center" scope="col">Especialidad</th>
                 <th class="text-center" scope="col">Intervalo de Atencion</th>
                 <th class="text-center" scope="col">Dia No Habil</th>
+                <th class="text-center" scope="col">Pacientes</th>
                 <th class="text-center" scope="col"><img src='imagenes/add.png' data-toggle='modal' onclick='modalMedicoAlta("<?=selectEspecialidad($listarEsp)?>"); return false'></th>
               </tr>
             </thead>
@@ -35,11 +37,13 @@
                 $diasHabiles = "'".obtenerDiasHabiles($value['id'])."'";
             ?>
               <tr id="<?=$value['id']; ?>">
-                <th class="text-center" scope="row"><?=$value['medNombre'];?></th> 
+                <th class="text-center" scope="row"><?=$value['medNombre'];?></th>
+                <td class="text-center"><?=$value['telefono'];?></td> 
                 <td class="text-center"><?=$value['titulo'];?></td>
                 <td class="text-center"> Cada <?=$value['intervalo'];?> Minutos</td> 
-                <td class="text-center"><fieldset disabled><textarea class="form-control" name="" id="" rows="1"><?=$value['evento'];?></textarea></fieldset></td>        
-                <td class="text-center"><button type="button" id="btnDetalle" class="btn btn-success" onclick="modalEditMed(<?=$value['id'];?>,'<?=$value['medNombre'];?>','<?=selectEspecialidad($listarEsp)?>',<?=$value['intervalo']?>,<?=$diasHabiles?>); return false">Detalles</button></td>            
+                <td class="text-center"><fieldset disabled><textarea class="form-control" name="" id="" rows="1"><?=$value['evento'];?></textarea></fieldset></td> 
+                <td class="text-center"><?=$value['pacientes'];?></td>       
+                <td class="text-center"><button type="button" id="btnDetalle" class="btn btn-success" onclick="modalEditMed(<?=$value['id'];?>,'<?=$value['medNombre'];?>','<?=$value['telefono'];?>','<?=selectEspecialidad($listarEsp)?>',<?=$value['intervalo']?>,'<?=$value['pacientes'];?>'); return false">Detalles</button></td>            
               </tr>
               <?}?>
             </tbody>
@@ -59,6 +63,8 @@
           <input type="hidden" id="medID" value="">
           <label>Nombre:</label>
           <input type="text" id="medNombre" class="form-control" autocomplete="off">
+          <label>Telefono:</label>
+          <input type="text" id="telefono" class="form-control" autocomplete="off">
           <label>Especialidad:</label>
           <select name="especialidad" id="especialidad" class="custom-select"></select>
           <label>Intervalo:</label>
@@ -66,6 +72,11 @@
             <option value="10">10 Minutos</option>
             <option value="15">15 Minutos</option>
             <option value="20">20 Minutos</option>
+          </select>
+          <label>Paciente:</label>
+          <select name="paciente" id="paciente" class="custom-select">
+            <option value="Si">Si</option>
+            <option value="No">No</option>
           </select>
           <label>Dia No Habil:</label>
           <input type="text" id="evento" class="form-control" autocomplete="off">
@@ -94,6 +105,8 @@
                 <input type="hidden" id="medIDedit" value="">
                   <label>Nombre:</label>
                     <input type="text" id="medNombreEdit" class="form-control" autocomplete="off">
+                  <label>Telefono:</label>
+                    <input type="text" id="telefonoEdit" class="form-control" autocomplete="off">
                   <label>Especialidad:</label>
                     <select name="especialidadEdit" id="especialidadEdit" class="custom-select"></select>
                   <label>Intervalo:</label>
@@ -102,8 +115,13 @@
                       <option value="15">15 Minutos</option>
                       <option value="20">20 Minutos</option>
                     </select>
-                    <label>Dia No Habil:</label>
-                      <input type="text" id="eventoEdit" class="form-control" autocomplete="off">               
+                  <label>Paciente:</label>
+                    <select name="pacientesEdit" id="pacientesEdit" class="custom-select">
+                      <option value="Si">Si</option>
+                      <option value="No">No</option>
+                    </select>
+                  <label>Dia No Habil:</label>
+                    <input type="text" id="eventoEdit" class="form-control" autocomplete="off">               
               </div>
             </div>
         <div class="modal-footer">
@@ -124,7 +142,9 @@ $(".alert").alert('close')
     Medico = {
          medNombre:$('#medNombre').val(),
          especialidad:$('#especialidad').val(),
+         telefono:$('#telefono').val(),
          intervalo:$('#intervalo').val(),
+         pacientes:$('#pacientes').val(),
          id:$('#medID').val(),
          evento: '"' + $('#evento').val() + '"'    
         };
@@ -139,8 +159,10 @@ $(".alert").alert('close')
     if (!$('#eventoEdit').val()) { var evento = null}else{var evento = '"' + $('#eventoEdit').val() + '",'}
       Medico = {
          medNombre:$('#medNombreEdit').val(),
+         telefono:$('#telefonoEdit').val(),
          especialidad:$('#especialidadEdit').val(),
          intervalo:$('#intervaloEdit').val(),
+         pacientes:$('#pacientesEdit').val(),
          id:$('#medIDedit').val(),
          evento: evento     
         };

@@ -4,8 +4,10 @@
 
 		private $id;
 		private $medNombre;
+		private $telefono;
 		private $especialidad;
 		private $intervalo;
+		private $pacientes;
 		private $evento;
 
 		public function listarMedicos(){
@@ -69,6 +71,12 @@
 			if(isset($_POST['evento'])){
 				$this->setEvento($_POST['evento']);
 			}
+			if(isset($_POST['telefono'])){
+				$this->setTelefono($_POST['telefono']);
+			}
+			if(isset($_POST['pacientes'])){
+				$this->setPacientes($_POST['pacientes']);
+			}
 		}
 		
 		public function agregarMedico(){
@@ -77,14 +85,19 @@
 			$especialidad=$this->getEspecialidad();
 			$intervalo=$this->getIntervalo();
 			$evento=$this->getEvento();
+			$telefono=$this->getTelefono();
+			$pacientes=$this->getPacientes();
 			$link=Conexion::conectar();
-			$sql="INSERT INTO medicos (medNombre,especialidad,intervalo,evento)
+			$sql="INSERT INTO medicos (medNombre,telefono,especialidad,intervalo,pacientes,evento)
 								values 
-								(:medNombre, :especialidad , :intervalo,'".$evento."')";
+								(:medNombre, :telefono, :especialidad , :intervalo, :pacientes, '".$evento."')";
 			$stmt = $link->prepare($sql);
 			$stmt->bindParam(":medNombre", $medNombre,PDO::PARAM_STR);
 			$stmt->bindParam(":especialidad", $especialidad,PDO::PARAM_STR);
 			$stmt->bindParam(":intervalo", $intervalo,PDO::PARAM_STR);
+			$stmt->bindParam(":pacientes", $pacientes,PDO::PARAM_STR);
+			$stmt->bindParam(":telefono", $telefono,PDO::PARAM_STR);
+
 			
 			if ($stmt->execute()) {
 				$this->setId($link->lastInsertID());
@@ -100,13 +113,17 @@
 			$especialidad=$this->getEspecialidad();
 			$intervalo=$this->getIntervalo();
 			$evento=$this->getEvento();
+			$telefono=$this->getTelefono();
+			$pacientes=$this->getPacientes();
 			$link=Conexion::conectar();
-			$sql="UPDATE medicos SET medNombre=:medNombre, especialidad = :especialidad, intervalo = :intervalo, evento = CONCAT(evento,'".$evento."') WHERE id=:id";
+			$sql="UPDATE medicos SET medNombre=:medNombre, telefono=:telefono, especialidad = :especialidad, intervalo = :intervalo,pacientes=:pacientes, evento = CONCAT(evento,'".$evento."') WHERE id=:id";
 			$stmt = $link->prepare($sql);
 			$stmt->bindParam(":id", $id,PDO::PARAM_STR);
 			$stmt->bindParam(":medNombre", $medNombre,PDO::PARAM_STR);
 			$stmt->bindParam(":especialidad", $especialidad,PDO::PARAM_STR);
 			$stmt->bindParam(":intervalo", $intervalo,PDO::PARAM_STR);
+			$stmt->bindParam(":pacientes", $pacientes,PDO::PARAM_STR);
+			$stmt->bindParam(":telefono", $telefono,PDO::PARAM_STR);
 			$stmt->execute();
 		}
 		public function borrarMedico(){
@@ -224,6 +241,46 @@
 		public function setEvento($evento)
 		{
 				$this->evento = $evento;
+
+				return $this;
+		}
+
+		/**
+		 * Get the value of pacientes
+		 */ 
+		public function getPacientes()
+		{
+				return $this->pacientes;
+		}
+
+		/**
+		 * Set the value of pacientes
+		 *
+		 * @return  self
+		 */ 
+		public function setPacientes($pacientes)
+		{
+				$this->pacientes = $pacientes;
+
+				return $this;
+		}
+
+		/**
+		 * Get the value of telefono
+		 */ 
+		public function getTelefono()
+		{
+				return $this->telefono;
+		}
+
+		/**
+		 * Set the value of telefono
+		 *
+		 * @return  self
+		 */ 
+		public function setTelefono($telefono)
+		{
+				$this->telefono = $telefono;
 
 				return $this;
 		}

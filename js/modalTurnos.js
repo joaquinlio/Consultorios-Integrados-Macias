@@ -111,12 +111,14 @@ function modalTurnoAlta(horario,medID,fecha,medico,obrasocial,medEsp){
   }
 
   
-  function modalEditMed(id,Nombre,medEsp,intervalo,diasHabiles){
+  function modalEditMed(id,Nombre,telefono,medEsp,intervalo,diasHabiles,pacientes){
     $("#eventoEdit").datepicker('destroy');
     $("#medIDedit").val(id);
     $("#medNombreEdit").val(Nombre);
     $("#especialidadEdit").html(medEsp);
     $("#intervaloEdit").val(intervalo);
+    $("#telefonoEdit").val(telefono);
+    $("#pacientesEdit").html(pacientes);
     $("#eventoEdit").datepicker({
         showOtherMonths: true,
         selectOtherMonths: true,

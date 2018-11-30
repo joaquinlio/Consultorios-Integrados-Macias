@@ -15,7 +15,6 @@
     <h2 class="h2 col-3"><?=$titulo." ".strftime("%d %b",strtotime($strFecha))?></h2>
     <div class="btn-group col-4">
       <input class="form-control" type="text" id="BuscarMed" name="BuscarMed" autocomplete="off" placeholder="Buscar Medico">
-      <button type="button" class="btn btn-outline-secondary" id="BuscadorMed"><i class="fas fa-search"></i></button>
     </div> 
     <div class="btn-group col-5">
     <h6>Filtrar Por Especialidad</h6>
@@ -37,14 +36,16 @@
     <div id="collapse<?=$value['id']?>" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
         <div class="card-body">
         <script>                      
-          $( function() {
+           $( function() {
+            var holidays = [<?=$value['evento']?>];
             $( "#<?=$value['id']; ?>" ).datepicker({
               showOtherMonths: true,
               selectOtherMonths: true,
               minDate: 0,
               beforeShowDay: function(date) {
+                var datestring = jQuery.datepicker.formatDate('yy-mm-dd', date);
                 var day = date.getDay();
-                return [(day != 0 && day != <?
+                return [( holidays.indexOf(datestring) == -1  && day != 0 && day != <?
                   $rsCalendario = mysql_query("SELECT diasemana FROM medicos_reservas WHERE medico =".$value['id']." AND horadesde = 0");
                   //print_r($rsCalendario);
                   foreach ($rsCalendario as $diaCal) {
@@ -56,8 +57,8 @@
                     }
                     break;                      
                   }                         
-                ?>)];
-              }                        
+                ?>)];   
+              }             
             });
             $("#<?=$value['id'];?>").on("change", function(){
               window.open("listadoTurnos.php?fecha="+ $( this ).val() + "<?if(isset($_GET['filtrarMed'])){echo "&filtrarMed=".$_GET['filtrarMed'];}?>&med=<?=$value['id'];?>");
@@ -95,10 +96,12 @@
    })
   }
  });
-  $("#BuscadorMed").click(function(){
+ $("#BuscarMed").keypress(function (e) {
+    if (e.which == 13) {
     medico = {query:$('#BuscarMed').val()};
     $.post('medicosJsonID.php', medico, function(data, textStatus){
       window.open("buscadorMedico.php?fecha=<?=$strFecha?>&med="+ data.id);
     },"json");
+    }
   });
 </script>
