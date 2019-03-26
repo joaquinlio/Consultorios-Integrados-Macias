@@ -153,7 +153,7 @@
                 <select class="custom-select" id="horadesdeDet">
                   <option value="0">No Asignado</option>
                   <option value="09">09:00</option>
-                  <? for($a=10;$a<=18;$a++){?>                     
+                  <? for($a=10;$a<=21;$a++){?>                     
                       <option value="<?=$a?>"><?=$a?>:00</option>
                   <?}?>
                 </select>     
@@ -161,7 +161,7 @@
                 <select class="custom-select" id="horahastaDet">
                     <option value="0">No Asignado</option>
                     <option value="09">09:00</option>
-                  <? for($a=10;$a<=18;$a++){?>                     
+                  <? for($a=10;$a<=21;$a++){?>                     
                       <option value="<?=$a?>"><?=$a?>:00</option>
                   <?}?>
                 </select>
